@@ -1,137 +1,203 @@
 @extends('principal')
 
+@section('imagen-encabezado')
+<div style="background-image: url('{{ asset('images/cotizar.webp') }}'); height: 100px; background-size: cover; background-position: center;">
+</div>
+@endsection
+
 @section('contenido')
-<center>
-<h1 style="color: white;"> Cotizar Evento</h1>
-<br>
-    <div style="background-color: #C2C0A6; padding: 20px; width: 300px; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); text-align: left;">
-        <form>
-            <!-- Tipo de evento -->
-            <label for="tipoEvento" style="color: #333333;">Tipo de Evento:</label>
-            <select id="tipoEvento" name="tipoEvento" style="width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;" required>
-                <option value="" disabled selected>Seleccione un tipo de evento</option>
-                <option value="boda">Boda</option>
-                <option value="xv">XV Años</option>
-                <option value="bautizo">Bautizo</option>
+<style>
+    body {
+        background-color: #A6A6A6; /* Fondo gris */
+    }
+
+    .container {
+        max-width: 90%; 
+    }
+
+    .form-label {
+        font-size: 1.2rem; 
+    }
+
+    .form-select, .form-control {
+        font-size: 1rem; 
+    }
+
+    button {
+        font-size: 1rem; 
+    }
+
+    .contenido-cotizar {
+        max-width: 900px; 
+        margin: 0 auto; 
+    }
+
+    h1, h2, h4 {
+        text-align: center;
+        color: black;
+    }
+
+    .table td, .table th {
+        text-align: center;
+    }
+
+    /* Ajustes específicos para las columnas de formulario */
+    .col-md-4 {
+        max-width: 33.33%; 
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="contenido-cotizar">
+    <h1>Cotiza tu evento</h1>
+
+    <!-- Formulario de detalles del evento -->
+    <form action="{{ route('cotizarevento') }}" method="POST">
+        {{ csrf_field() }}
+        <div class="form-group mb-3">
+            <label for="tipoEvento" class="form-label">Tipo de Evento:</label>
+            <select class="form-select border-0 border-bottom" id="idCatEvent" name="idCatEvent" required>
+                <option value="" disabled selected>Selecciona un evento</option>
+                @foreach($evento as $eve)
+                    <option value="{{$eve->idCatEvent}}">{{$eve->nombre}}</option>
+                @endforeach
             </select>
+        </div>
+    </form>
 
-            <!-- Banquete -->
-            <label style="color: #333333;">
-                Banquete:
-                <input type="checkbox" id="banquete" name="banquete" style="margin-right: 5px;">
-                Añadir
-            </label>
-
-            <!-- Tiempos del banquete -->
-            <label for="tiemposBanquete" style="color: #333333;">Tiempos del Banquete:</label>
-            <select id="tiemposBanquete" name="tiemposBanquete" style="width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
-                <option value="" disabled selected>Seleccione el número de tiempos</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
+    <!-- Productos y Servicios -->
+    <h2>Productos y Servicios</h2>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label for="idPS" class="form-label">Selecciona Producto o Servicio:</label>
+            <select class="form-select border-0 border-bottom" id="idPS" name="idPS" required>
+                <option value="" disabled selected>Selecciona producto o servicio</option>
+                @foreach($productosservicios as $ps)
+                    <option value="{{$ps->idPS}}">{{$ps->nombre}}</option>
+                @endforeach
             </select>
-
-            <!-- Fotografía -->
-            <label style="color: #333333;">
-                Fotografía:
-                <input type="checkbox" id="fotografia" name="fotografia" style="margin-right: 5px;">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="cantidad" class="form-label">Cantidad:</label>
+            <input type="number" class="form-control border-0 border-bottom" id="cantidad" name="cantidad" placeholder="Cantidad" min="1" required>
+        </div>
+        <div class="col-md-4 mb-3 d-flex align-items-end">
+            <button type="button" class="btn btn-secondary rounded-pill px-4 me-2" id="btnAñadir">
                 Añadir
-            </label>
-
-            <!-- Número de fotógrafos -->
-            <label for="numeroFotografos" style="color: #333333;">Número de Fotógrafos:</label>
-            <select id="numeroFotografos" name="numeroFotografos" style="width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
-                <option value="" disabled selected>Seleccione el número de fotógrafos</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-
-            <!-- Maquillaje -->
-            <label style="color: #333333;">
-                Maquillaje:
-                <input type="checkbox" id="maquillaje" name="maquillaje" style="margin-right: 5px;">
-                Añadir
-            </label>
-
-            <!-- Personas a maquillar -->
-            <label for="personasMaquillar" style="color: #333333;">Personas a Maquillar:</label>
-            <select id="personasMaquillar" name="personasMaquillar" style="width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
-                <option value="" disabled selected>Seleccione el número de personas a maquillar</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-            </select>
-
-            <!-- Invitaciones -->
-            <label style="color: #333333;">
-                Invitaciones:
-                <input type="checkbox" id="invitaciones" name="invitaciones" style="margin-right: 5px;">
-                Añadir
-            </label>
-
-            <!-- Número de invitaciones -->
-            <label for="numeroInvitaciones" style="color: #333333;">Número de Invitaciones:</label>
-            <input type="text" id="numeroInvitaciones" name="numeroInvitaciones" style="width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
-
-            <!-- Recuerdos -->
-            <label style="color: #333333;">
-                Recuerdos:
-                <input type="checkbox" id="recuerdos" name="recuerdos" style="margin-right: 5px;">
-                Añadir
-            </label>
-
-            <!-- Número de recuerdos -->
-            <label for="numeroRecuerdos" style="color: #333333;">Número de Recuerdos:</label>
-            <input type="text" id="numeroRecuerdos" name="numeroRecuerdos" style="width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
-
-            <!-- Vestimenta -->
-            <label style="color: #333333;">
-                Vestimenta:
-                <input type="checkbox" id="vestimenta" name="vestimenta" style="margin-right: 5px;">
-                Añadir
-            </label>
-
-            <!-- Número de personas a vestir -->
-            <label for="personasVestir" style="color: #333333;">Número de Personas a Vestir:</label>
-            <input type="text" id="personasVestir" name="personasVestir" style="width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
-
-            <!-- Nombre -->
-            <label for="nombre" style="color: #333333;">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" style="width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;" required>
-
-            <!-- Fecha de Cotización -->
-            <label for="fechaCotizacion" style="color: #333333;">Fecha de Cotización:</label>
-            <input type="text" id="fechaCotizacion" name="fechaCotizacion" style="width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;" required>
-
-            <!-- Fecha del Evento -->
-            <label for="fechaEvento" style="color: #333333;">Fecha del Evento:</label>
-            <input type="text" id="fechaEvento" name="fechaEvento" style="width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;" required>
-
-            <!-- Número de Contrato -->
-            <label for="numeroContrato" style="color: #333333;">Número de Contrato:</label>
-            <input type="text" id="numeroContrato" name="numeroContrato" style="width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;" required>
-
-
-            <!-- Botones -->
-            <div style="display: flex; justify-content: space-between; gap: 10px;">
-                <button type="button" class="btn btn-dark disabled">Ver cotizacion</button>
-            </div>
-        </form>
+            </button>
+        </div>
     </div>
-</center>
-@stop
 
+    <!-- Tabla de productos seleccionados -->
+    <h4>Detalles de la Selección</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Producto/Servicio</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Subtotal</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaProductos"></tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-end fw-bold">Monto Total:</td>
+                    <td id="montoTotal" class="fw-bold">$0.00</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- Formulario adicional -->
+    <form action="#" method="POST">
+        @csrf
+        <div class="form-group mb-3">
+            <label for="nombre" class="form-label">Nombre:</label>
+            <select class="form-select border-0 border-bottom" id="idCli" name="idCli" required>
+                <option value="" disabled selected>Selecciona tu nombre</option>
+                @foreach($cliente as $cli)
+                    <option value="{{$cli->idCli}}">{{$cli->nombre}}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="fechaCotizacion" class="form-label">Fecha de Cotización:</label>
+            <input type="date" id="fechaCotizacion" name="fechaCotizacion" class="form-control" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="fechaEvento" class="form-label">Fecha del Evento:</label>
+            <input type="date" id="fechaEvento" name="fechaEvento" class="form-control" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="numeroContrato" class="form-label">Número de Cotización:</label>
+            <input type="text" id="numeroContrato" name="numeroContrato" class="form-control" required>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-secondary rounded-pill px-4 me-2">Registrar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Función para añadir productos
+    document.getElementById('btnAñadir').addEventListener('click', function () {
+        const selectProducto = document.getElementById('idPS');
+        const cantidadInput = document.getElementById('cantidad');
+
+        const producto = selectProducto.options[selectProducto.selectedIndex].text;
+        const precioUnitario = parseFloat(selectProducto.value); 
+        const cantidad = parseInt(cantidadInput.value);
+
+        if (producto && cantidad > 0) {
+            const subtotal = (precioUnitario * cantidad).toFixed(2);
+
+            const tablaProductos = document.getElementById('tablaProductos');
+            const fila = document.createElement('tr');
+            fila.innerHTML = `
+                <td>${producto}</td>
+                <td>${cantidad}</td>
+                <td>$${precioUnitario.toFixed(2)}</td>
+                <td>$${subtotal}</td>
+                <td><button class="btn btn-secondary rounded-pill px-4">Eliminar</button></td>
+            `;
+            tablaProductos.appendChild(fila);
+
+            actualizarMontoTotal();
+
+            cantidadInput.value = '';
+            selectProducto.selectedIndex = 0;
+
+            fila.querySelector('.btnEliminar').addEventListener('click', function () {
+                fila.remove();
+                actualizarMontoTotal();
+            });
+        } else {
+            alert('Por favor selecciona un producto/servicio y una cantidad válida.');
+        }
+    });
+
+    function actualizarMontoTotal() {
+        const tablaProductos = document.getElementById('tablaProductos');
+        let total = 0;
+
+        tablaProductos.querySelectorAll('tr').forEach((fila) => {
+            const subtotal = parseFloat(fila.children[3].textContent.replace('$', ''));
+            total += subtotal;
+        });
+
+        document.getElementById('montoTotal').textContent = `$${total.toFixed(2)}`;
+    }
+</script>
+
+@endsection

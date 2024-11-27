@@ -1,10 +1,19 @@
+<!--
+ELABORADO POR: Lizbeth Huitzil Leal
+FECHA: 26-11-2024
+DESCRIPCCIÓN: Esta función tiene el objetivo de recoger testimonios
+ y opiniones de los usuarios sobre el servicio, lo que puede ayudar a 
+ la empresa a obtener retroalimentación y mejorar su servicio.
+-->
 @extends('principal')
 
 @section('contenido')
-<center>
-    <h1 style="color: white;">Experiencias</h1>
-    <br>
-</center>
+<!-- Estilos personalizados -->
+<style>
+    body {
+        background-color: #A6A6A6; /* Fondo gris */
+    }
+</style>
 
 <!-- Carrusel de Testimonios -->
 <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -48,7 +57,7 @@
 
     </div>
 
-    <!-- Controles de navegación -->
+    <!-- Controles de navegación del carrusel -->
     <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
@@ -57,76 +66,113 @@
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Next</span>
     </button>
-
 </div>
-    <!----------------------- Formulario de Experiencias -------------------------->
+
+<!-- Imagen decorativa -->
+<div class="text-center my-5">
+    <img src="images/experiencias.webp" alt="Imagen entre testimonios y formulario" class="img-fluid" style="max-width: 70%; height: auto;">
+</div>
+
+<!-- Formulario de Experiencias -->
+<form action="{{ route('encuestas.guardaencuesta') }}" method="POST">
+    @csrf
     <div class="container my-5">
-        <h2 class="text-center mb-4" style="color: white;">Cuéntanos tu experiencia</h2>
+        <h1 class="text-center mb-4" style="color: black;">Cuéntanos tu experiencia</h1>
 
-        <form>
-            <div class="row mb-3">
-                <!-- Campo de Nombre -->
-                <div class="col-md-6" style="color: white;">
-                    <label for="nombre" class="form-label">Nombre</label>
-                    <input type="text" class="form-control" id="nombre" placeholder="Nombre">
-                </div>
-                <!-- Campo de Apellido -->
-                <div class="col-md-6" style="color: white;">
-                    <label for="apellido" class="form-label">Apellido</label>
-                    <input type="text" class="form-control" id="apellido" placeholder="Apellido">
-                </div>
+        <!-- Mensajes de éxito o error -->
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+        @endif
 
-            <div class="row mb-3">
-                <!-- Campo de Email -->
-                <div class="col-md-6" style="color: white;">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" placeholder="Email">
-                </div>
-                <!-- Campo de Teléfono -->
-                <div class="col-md-6" style="color: white;">
-                    <label for="telefono" class="form-label">Teléfono</label>
-                    <input type="tel" class="form-control" id="telefono" placeholder="Teléfono">
-                </div>
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+        @endif
 
-            <!-- Área de Texto para Comentarios -->
-            <div class="mb-3">
-                <label for="comentario" class="form-label" style="color: white;">¿Te gustó el servicio? ¿Fue inolvidable? ¿Algo para mejorar? Queremos saber todo.</label>
-                <textarea class="form-control" id="comentario" rows="4" placeholder="Escribe aquí tu comentario..."></textarea>
-            </div>
+        <!-- Selección de Nombre -->
+        <div class="form-group mb-3">
+            <label for="Nombre" class="form-label" style="color: black;">Nombre:</label>
+            <select class="form-select border-0 border-bottom" id="Nombre" name="Nombre" required>
+                <option value="" disabled selected>Selecciona tu nombre</option>
+                @foreach($cliente as $cli)
+                    <option value="{{ $cli->idCli }}">{{ $cli->nombre }}</option>
+                @endforeach
+            </select>
+        </div>
 
-            <!-- Pregunta de Recomendación -->
-            <div class="mb-3" style="color: white;">
-                <p>¿Nos recomendarías a tus amigos?</p>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="recomendacion" id="recomendacionSi" value="si">
-                    <label class="form-check-label" for="recomendacionSi">Sí</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="recomendacion" id="recomendacionNo" value="no">
-                    <label class="form-check-label" for="recomendacionNo">No</label>
-                </div>
-            </div>
+        <!-- Pregunta de gusto -->
+        <div class="mb-3" style="color: black;">
+            <label for="likeService" class="form-label">¿Te gustó el servicio? ¿Fue inolvidable?</label><br>
+            <input type="radio" class="form-check-input" id="likeService" name="likeService" value="true" checked> Sí
+            <input type="radio" class="form-check-input" id="likeService" name="likeService" value="false"> No
+        </div>
 
-            <!-- Calificación con Estrellas -->
-            <div class="mb-3 text-center" style="color: black;">
-                <p>¡Puntúanos!</p>
-                <span class="star-rating">
-                    <i class="bi bi-star" style="font-size: 24px; color: #FFD700;"></i>
-                    <i class="bi bi-star" style="font-size: 24px; color: #FFD700;"></i>
-                    <i class="bi bi-star" style="font-size: 24px; color: #FFD700;"></i>
-                    <i class="bi bi-star" style="font-size: 24px; color: #FFD700;"></i>
-                    <i class="bi bi-star" style="font-size: 24px; color: #FFD700;"></i>
-                </span>
-            </div>
+        <!-- Pregunta de recomendación -->
+        <div class="mb-3" style="color: black;">
+            <label for="recomendar" class="form-label">¿Nos recomendarías con tus amigos?</label><br>
+            <input type="radio" class="form-check-input" id="recomendar" name="recomendar" value="true" checked> Sí
+            <input type="radio" class="form-check-input" id="recomendar" name="recomendar" value="false"> No
+        </div>
 
-            <!-- Botón de Enviar -->
-            <div class="text-center">
-                <button type="submit" class="btn btn-outline-dark">Enviar</button>
-            </div>
-        </form>
+        <!-- Calificación con Estrellas -->
+        <div class="mb-3 text-center" style="color: black;">
+            <p>¡Califícanos!</p>
+            <span class="star-rating">
+                <i class="bi bi-star" data-value="1" style="font-size: 24px; color: #FFD700; cursor: pointer;"></i>
+                <i class="bi bi-star" data-value="2" style="font-size: 24px; color: #FFD700; cursor: pointer;"></i>
+                <i class="bi bi-star" data-value="3" style="font-size: 24px; color: #FFD700; cursor: pointer;"></i>
+                <i class="bi bi-star" data-value="4" style="font-size: 24px; color: #FFD700; cursor: pointer;"></i>
+                <i class="bi bi-star" data-value="5" style="font-size: 24px; color: #FFD700; cursor: pointer;"></i>
+            </span>
+            <input type="hidden" name="rating" id="rating" value="0">
+        </div>
+
+        <!-- Botón de Enviar -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-secondary rounded-pill px-4 me-2">Registrar</button>
+        </div>
     </div>
+</form>
 
-</div>
+<!-- Script para manejo de estrellas -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const stars = document.querySelectorAll(".star-rating i");
+        const ratingInput = document.getElementById("rating");
+
+        stars.forEach((star, index) => {
+            // Manejo del clic en una estrella
+            star.addEventListener("click", () => {
+                const rating = index + 1;
+                ratingInput.value = rating;
+                stars.forEach((s, i) => {
+                    s.classList.toggle("bi-star-fill", i < rating);
+                    s.classList.toggle("bi-star", i >= rating);
+                });
+            });
+
+            // Hover para previsualizar calificación
+            star.addEventListener("mouseover", () => {
+                stars.forEach((s, i) => {
+                    s.classList.toggle("bi-star-fill", i <= index);
+                });
+            });
+
+            // Restablecer al salir del hover
+            star.addEventListener("mouseout", () => {
+                const rating = ratingInput.value;
+                stars.forEach((s, i) => {
+                    s.classList.toggle("bi-star-fill", i < rating);
+                    s.classList.toggle("bi-star", i >= rating);
+                });
+            });
+        });
+    });
+</script>
 @stop
+

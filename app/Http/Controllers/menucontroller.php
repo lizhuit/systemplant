@@ -123,18 +123,12 @@ class menucontroller extends Controller
     }
 
 
-    public function proveedores()
-    {
-        return view('proveedores');
-    }
+    
     public function contratarevento()
     {
         return view('contratarevento');
     }
-    public function cotizarevento()
-    {
-        return view('cotizarevento');
-    }
+   
 
 
     //Funciones para función Agendar Cita
@@ -186,7 +180,141 @@ class menucontroller extends Controller
     }
 
 
-     
+ //-------------------------------------------------------------------------------------------------------------
+//Función para ver la vista de proveedores
+    public function proveedores()
+    {
+        return view('proveedores');
+    }
+    
+//Función para consultar
+    public function consultarpro()
+    {
+        $provedoes = Provedoes::all(); // Obtener todos los proveedores de la base de datos
+        return view('proveedores.consultarpro', compact('provedoes'));
+    }
+
+//Función para editar
+    public function editarpro($idPro)
+    {
+    $proveedor = provedoes::find($idPro); // Obtiene el proveedor por su ID
+    return view('proveedores.editarpro', compact('proveedor')); // Pasa los datos a la vista 'editarpro'
+    }
+
+//Función para registrar
+    public function registrarpro(Request $request)
+    {
+     $request->validate([
+         'nombre' => 'required|string|max:20',
+         'tel' => 'required|string|max:10',
+         'direccion' => 'required|string|max:20',
+         'correo' => 'required|email|max:50',
+        ]);
+
+        $proveedor = new Provedoes();
+        $proveedor->nombre = $request->nombre;
+        $proveedor->tel = $request->tel;
+        $proveedor->correo = $request->correo;
+        $proveedor->direccion = $request->direccion;
+        $proveedor->save();
+
+        return redirect()->route('proveedores.consultarpro')->with('success', 'Proveedor registrado exitosamente');
+    }
+
+//Función para actualizar
+    public function actualizarpro(Request $request, $idPro)
+    {
+    $proveedor = Provedoes::find($idPro); 
+    $proveedor->nombre = $request->nombre;
+    $proveedor->tel= $request->tel;
+    $proveedor->direccion = $request->direccion;
+    $proveedor->correo = $request->correo;
+    $proveedor->save(); 
+
+    return redirect()->route('proveedores.consultarpro')->with('success', 'Proveedor actualizado correctamente');
+    }
+
+//Función para eliminar
+    public function eliminarpro($idPro)
+    {
+    try {
+        $deleted = Provedoes::where('idPro', $idPro)->delete();
+
+        if ($deleted) {
+            return redirect()->route('proveedores.consultarpro')->with('success', "El proveedor con ID $idPro ha sido eliminado correctamente.");
+        } else {
+            return redirect()->route('proveedores.consultarpro')->with('error', "El proveedor con ID $idPro no pudo ser encontrado.");
+        }
+    } catch (\Illuminate\Database\QueryException $e) {
+        return redirect()->route('proveedores.consultarpro')
+            ->with('error', "No se puede eliminar el proveedor con ID $idPro porque está relacionado con otras tablas");}
+    }
+
+//------------------------------------------------------------------------------------------------------------------------------------
+
+//Función que retorna la vista de cotizarevento
+    public function cotizarevento()
+    {
+        $evento = eventos::orderby('nombre', 'asc')->get();
+        $productosservicios = productosservicios::orderby('nombre', 'asc')->get();
+        $cliente = clientes::orderby('nombre', 'asc')->get();
+        
+
+    return view('cotizarevento')
+            ->with('evento', $evento)
+            ->with('productosservicios', $productosservicios)
+            ->with('cliente', $cliente);
+    }
+
+//Función para guardar cotización
+    public function guardarcoti()
+    {
+
+    }
+
+ //Función para consultar productos y servicios   
+    public function consultarproductos()
+    {
+        $productosservicios = productosservicios::all(); 
+        return view('cotizarevento', compact('productosservicios'));
+    }
+
+//-------------------------------------------------------------------------------------------------
+
+//Función que retorna la vista de experiencias
+    public function experiencias()
+    {
+        $cliente = clientes::orderby('nombre', 'asc')->get();
+        return view('experiencias')
+        ->with('cliente', $cliente);
+    }
+
+//Función que guarda encuesta
+    public function guardaEncuesta(Request $request) {
+        $validated = $request->validate([
+            'Nombre' => 'required',
+            'rating' => 'required|integer|min:1|max:5',
+            'likeService' => 'required|in:true,false', 
+            'recomendar' => 'required|in:true,false', 
+        ]);
+    
+        // Convertir valores a booleanos
+        $likeService = $request->likeService === 'true';
+        $recomendar = $request->recomendar === 'true';
+    
+        // Crear una nueva encuesta
+        $encuesta = new Encuestas();
+        $encuesta->idCli = $request->Nombre;
+        $encuesta->likeService = $likeService;
+        $encuesta->recomendar = $recomendar;
+        $encuesta->puntuacion = $request->rating;
+        $encuesta->save();
+    
+        return redirect()->back()->with('success', '¡Gracias por tu comentario!');
+    }
+
+//--------------------------------------------------------------------------------------------------
+
      
 
 
@@ -194,10 +322,7 @@ class menucontroller extends Controller
     {
         return view('controlpagos');
     }
-    public function experiencias()
-    {
-        return view('experiencias');
-    }
+   
 
 
     //Funciones para función Reportar Ingresos

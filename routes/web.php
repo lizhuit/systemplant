@@ -35,6 +35,20 @@ Route::post('agendar', [menucontroller::class, 'store'])->name('agendar.store');
 //---------RUTAS PARA REPORTAR INGRESOS
 Route::post('reportaringresos/generar', [menucontroller::class, 'generarReporte'])->name('generarReporte');
 
+//--------- RUTAS PARA PROVEEDORES
+Route::get('/proveedores/consultarpro', [menucontroller::class, 'consultarpro'])->name('proveedores.consultarpro');
+Route::post('/proveedores/registrarpro', [menucontroller::class, 'registrarpro'])->name('proveedores.registrarpro'); 
+Route::get('/proveedores/editarpro/{idPro}', [menucontroller::class, 'editarpro'])->name('proveedores.editarpro'); 
+Route::put('/proveedores/actualizarpro/{idPro}', [menucontroller::class, 'actualizarpro'])->name('proveedores.actualizarpro'); 
+//Route::delete('/proveedores/eliminarpro/{idPro}', [ProveedoresController::class, 'eliminarpro'])->name('proveedores.eliminarpro');
+Route::get('eliminarpro/{idPro}',[menucontroller::class,'eliminarpro'])->name('eliminarpro');
+
+//--------- RUTAS PARA COTIZAR
+Route::get('/cotizarevento', [menucontroller::class, 'cotizarevento'])->name('cotizarevento');
+
+//-------- RUTAS PARA ENCUESTA
+Route::post('/encuestas/guardaencuesta', [menucontroller::class, 'guardaencuesta'])->name('encuestas.guardaencuesta');
+
 
 
 Route::get('inicio',[menucontroller::class,'inicio'])->name('inicio');
