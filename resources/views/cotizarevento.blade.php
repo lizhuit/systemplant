@@ -1,3 +1,8 @@
+<!--
+ELABORADO POR: Lizbeth Huitzil Leal
+FECHA: 26-11-2024
+DESCRIPCCIÓN: En esta vista se podrá realizar la cotización de un evento.
+-->
 @extends('principal')
 
 @section('imagen-encabezado')
@@ -6,6 +11,7 @@
 @endsection
 
 @section('contenido')
+<!-- Estilos personalizados -->
 <style>
     body {
         background-color: #A6A6A6; /* Fondo gris */
@@ -51,6 +57,7 @@
     }
 </style>
 
+<!-- Contenedor principal de la página -->
 <div class="contenido-cotizar">
     <h1>Cotiza tu evento</h1>
 
@@ -80,10 +87,12 @@
                 @endforeach
             </select>
         </div>
+        <!-- Campo para la cantidad -->
         <div class="col-md-4 mb-3">
             <label for="cantidad" class="form-label">Cantidad:</label>
             <input type="number" class="form-control border-0 border-bottom" id="cantidad" name="cantidad" placeholder="Cantidad" min="1" required>
         </div>
+        <!-- Botón para añadir producto o servicio -->
         <div class="col-md-4 mb-3 d-flex align-items-end">
             <button type="button" class="btn btn-secondary rounded-pill px-4 me-2" id="btnAñadir">
                 Añadir
@@ -149,6 +158,7 @@
     </form>
 </div>
 
+<!-- Scripts para la interacción dinámica -->
 <script>
     // Función para añadir productos
     document.getElementById('btnAñadir').addEventListener('click', function () {
@@ -186,7 +196,7 @@
             alert('Por favor selecciona un producto/servicio y una cantidad válida.');
         }
     });
-
+ // Función para actualizar el monto total
     function actualizarMontoTotal() {
         const tablaProductos = document.getElementById('tablaProductos');
         let total = 0;
